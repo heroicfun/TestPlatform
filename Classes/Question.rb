@@ -1,20 +1,22 @@
-require_relative 'Dependencies'
+require 'securerandom'
 
 class Question
-  attr_accessor :test_id, :question, :options, :answer
+  attr_accessor :id, :test_id, :body, :options, :answer
 
   def initialize()
+    @id = SecureRandom.uuid.to_s
     @test_id = '',
-    @question = '',
+    @body = '',
     @options = [],
-    @answer = []
+    @answer = 0
   end
 
   def from_h(h)
     question = self.new()
 
+    question.id = h[:id]
     question.test_id = h[:test_id]
-    question.question = h[:question]
+    question.body = h[:body]
     question.options = h[:options]
     question.answer = h[:answer]
 
@@ -23,8 +25,9 @@ class Question
 
   def to_h
     {
+      id: @id,
       test_id: @test_id,
-      question: @question,
+      body: @body,
       options: @options,
       answer: @answer
     }

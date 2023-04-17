@@ -1,4 +1,4 @@
-require_relative 'Dependencies'
+require 'securerandom'
 
 class Test
   attr_accessor :id, :name, :questions
@@ -23,7 +23,7 @@ class Test
     {
       id: @id,
       name: @name,
-      questions: @questions.to_h {|question| [question.question, question.to_h] },
+      questions: @questions.to_h {|question| [question.body, question.to_h] },
     }
   end
 
