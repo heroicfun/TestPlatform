@@ -1,11 +1,7 @@
-require_relative 'Services/Dependencies'
+require_relative 'Services/Core'
 
-def question_menu_loop(question)
-
-end
-
-def make_test_name_valid(test)
-  is_name_valid = !File.exist?("./Tests/#{test.name}.json")
+def make_test_name_valid(test, current_file_name='')
+  is_name_valid = current_file_name == test.name || !File.exist?("./Tests/#{test.name}.json")
   while !is_name_valid
     puts 'Test with the same name already exist!'
     puts 'Enter new test name:'
@@ -34,7 +30,7 @@ end
 
 def show_question_options(question)
   puts question.body
-  question.options.each.with_index {|o, i| puts "#{i + 1}. #{o}" }
+  display_numbered question.options
 end
 
 def question_menu_loop(question, test)
@@ -47,14 +43,16 @@ def question_menu_loop(question, test)
       when 2
         puts 'Enter option:'
         question.options.append gets.chomp
+        puts 'Option added successfully!'
       when 3
         begin
           show_question_options question
           puts 'Select option number:'
           selected_option_index = gets.chomp.to_i - 1
-          if selected_option_index > -1 || selected_option_index < question.options.length
+          if selected_option_index > -1 && selected_option_index < question.options.length
             puts 'Enter new option:'
             question.options[selected_option_index] = gets.chomp
+            puts 'Option edited successfully!'
           else
             puts 'Invalid value entered!'
           end
@@ -66,8 +64,9 @@ def question_menu_loop(question, test)
           show_question_options question
           puts 'Select option number:'
           selected_option_index = gets.chomp.to_i - 1
-          if selected_option_index > -1 || selected_option_index < question.options.length
+          if selected_option_index > -1 && selected_option_index < question.options.length
             question.options.delete_at selected_option_index
+            puts 'Option removed successfully!'
           else
             puts 'Invalid value entered!'
           end
@@ -86,8 +85,9 @@ def question_menu_loop(question, test)
           show_question_options question
           puts 'Select option number:'
           selected_option_index = gets.chomp.to_i - 1
-          if selected_option_index > -1 || selected_option_index < question.options.length
+          if selected_option_index > -1 && selected_option_index < question.options.length
             question.answer = selected_option_index
+            puts 'Answer changed successfully!'
           else
             puts 'Invalid value entered!'
           end
@@ -101,6 +101,8 @@ def question_menu_loop(question, test)
           make_question_name_in_test_valid question, test
         rescue => exception
           puts 'Invalid value entered!'
+        else
+          puts 'Question body edited successfully!'
         end
       when 0
         break
@@ -113,7 +115,7 @@ def show_test_questions(test)
   test.questions.each.with_index.with_object({}) {|(q, i), q_hash| puts "#{i + 1}. #{q.body}" }
 end
 
-def test_menu_loop(test)
+def test_menu_loop(test, current_file_name='')
   while true
     puts 'Select the command: 1-Show questions, 2-Add question, 3-Edit question, 4-Remove question, 5-Rename test, 6-Save test, 0-Exit'
     option = gets.chomp
@@ -129,20 +131,22 @@ def test_menu_loop(test)
           make_question_name_in_test_valid new_question, test
           test.questions.append new_question
           question_menu_loop new_question, test
-          puts 'Question added successfully'
         rescue => exception
           puts 'An error occurred during question adding!'
+        else
+          puts 'Question added successfully.'
         end
       when 3
         begin
           show_test_questions test
           puts 'Select question number:'
-          selected_question_index = gets.chomp.to_i
-          selected_question = test.questions[selected_question_index - 1]
-          question_menu_loop selected_question
-          puts 'Question edited successfully'
+          selected_question_index = gets.chomp.to_i - 1
+          selected_question = test.questions[selected_question_index]
+          question_menu_loop selected_question, test
         rescue => exception
           puts 'Invalid value entered!'
+        else
+          puts 'Question edited successfully.'
         end
       when 4
         begin
@@ -153,26 +157,26 @@ def test_menu_loop(test)
         rescue => exception
           puts 'Invalid value entered!'
         else
-          puts 'Question removed successfully'
+          puts 'Question removed successfully.'
         end
       when 5
         begin
           puts 'Enter new test name:'
           test.name = gets.chomp
-          make_test_name_valid test
+          make_test_name_valid test, current_file_name
         rescue => exception
           puts 'An error occurred during test renaming!'
         else
-          puts 'Test renamed successfully'
+          puts 'Test renamed successfully.'
         end
       when 6
         begin
-          make_test_name_valid test
-          save_to_json test
+          make_test_name_valid test, current_file_name
+          save_test_to_json test
         rescue => exception
           puts 'An error occurred during test saving!'
         else
-          puts 'Test saved successfully'
+          puts 'Test saved successfully.'
         end
       when 0
         break
@@ -180,7 +184,7 @@ def test_menu_loop(test)
   end
 end
 
-def save_to_json(test)
+def save_test_to_json(test)
   File.open("./Tests/#{test.name}.json", 'w') do |f|
     f.write(JSON.pretty_generate(test.to_h))
   end
@@ -188,34 +192,50 @@ end
 
 def create_test
   test = Test.new
-
   puts 'Enter test name:'
   test.name = gets.chomp
-
   make_test_name_valid test
-  
   test_menu_loop test
 end
 
-def load_from_json
-
+def load_test_from_json test_name
+  json = File.read("./Tests/#{test_name}.json")
+  hash = JSON.parse(json)
+  Test.from_h(hash)
 end
 
 def manager_menu_loop
   while true
-    puts 'Select the command: 1-Create test, 2-Load tests, 3-Run test'
+    puts 'Select the command: 1-Create test, 2-Edit test, 3-Run test'
     option = gets.chomp
     case option.to_i
-    when 1
-      create_test
-    when 2
-      load_test gets.chomp
-    when 3
-      # display awaible tests
-      # read user input
-      # start testing
-    else
-      exit 0
+      when 1
+        create_test
+      when 2
+        begin
+          puts 'Awaible tests:'
+          test_names = get_test_names
+          display_numbered test_names
+          puts 'Select test number:'
+          selected_test_index = gets.chomp.to_i - 1
+          if selected_test_index > -1 && selected_test_index < test_names.length
+            test_name = test_names[selected_test_index]
+            test = load_test_from_json test_name
+            test_menu_loop test, test_name
+          else
+            puts 'Invalid value entered!'
+          end
+        rescue => exception
+          puts "An error occurred during test editing: #{exception}"
+        else
+          puts 'Test edited successfully.'
+        end
+      when 3
+        # display awaible tests
+        # read user input
+        # start testing
+      else
+        exit 0
     end
   end
 end

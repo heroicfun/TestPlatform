@@ -11,14 +11,14 @@ class Question
     @answer = 0
   end
 
-  def from_h(h)
+  def self.from_h(h)
     question = self.new()
 
-    question.id = h[:id]
-    question.test_id = h[:test_id]
-    question.body = h[:body]
-    question.options = h[:options]
-    question.answer = h[:answer]
+    question.id = h['id']
+    question.test_id = h['test_id']
+    question.body = h['body']
+    question.options = h['options']
+    question.answer = h['answer']
 
     question
   end

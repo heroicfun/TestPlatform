@@ -9,12 +9,12 @@ class Test
     @questions = []
   end
 
-  def from_h(h)
+  def self.from_h(h)
     test = self.new()
     
-    test.id = h[:id]
-    test.name = h[:name]
-    test.questions = h[:questions]
+    test.id = h['id']
+    test.name = h['name']
+    test.questions = h['questions'].map { |question| Question.from_h(question) }
 
     test
   end
@@ -23,7 +23,7 @@ class Test
     {
       id: @id,
       name: @name,
-      questions: @questions.to_h {|question| [question.body, question.to_h] },
+      questions: @questions.map { |question| question.to_h },
     }
   end
 
