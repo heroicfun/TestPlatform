@@ -1,3 +1,4 @@
+require_relative 'Question'
 require 'securerandom'
 
 class Test
