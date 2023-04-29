@@ -1,7 +1,14 @@
 require_relative '../Classes/Test'
+require_relative '../Helpers/FileHelper'
 require 'json'
 
 class TestService
+  def self.init settings
+    @@file = FileHelper.new do |helper|
+      helper.file_path = settings['test_files']['path']
+      helper.file_ext = settings['test_files']['ext']
+    end
+  end
 
   def self.get_test_names
     tests = []
@@ -15,14 +22,12 @@ class TestService
   end
 
   def self.save_test test
-    File.open("./Tests/#{test.name}.json", 'w') do |f|
-      f.write(JSON.pretty_generate(test.to_h))
-    end
+    json = JSON.pretty_generate(test.to_h)
+    @@file.write test.name, json
   end
 
   def self.load_test test_name
-    json = File.read("./Tests/#{test_name}.json")
-    hash = JSON.parse(json)
-    Test.from_h(hash)
+    json = @@file.read test_name
+    Test.from_h(JSON.parse(json))
   end
 end

@@ -1,0 +1,4 @@
+development:
+  test_files:
+    path: './Tests'
+    ext: 'json'
