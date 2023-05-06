@@ -6,9 +6,10 @@ class FileHelper
   end
 
   def write file_name, content
-    File.open("#{@file_path}/#{file_name}.#{@file_ext}", 'w') do |f|
-      f.write(content)
+    unless File.directory?(file_path)
+      FileUtils.mkdir_p(file_path)
     end
+    File.write("#{@file_path}/#{file_name}.#{@file_ext}", content, mode: 'w')
   end
 
   def read file_name

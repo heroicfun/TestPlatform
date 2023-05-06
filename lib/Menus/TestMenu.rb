@@ -1,24 +1,21 @@
-require_relative '../Services/TestService'
-
 class TestMenu
-
   def self.run test, current_file_name=''
     test_menu_loop test, current_file_name
   end
   
   def self.make_test_name_valid(test, current_file_name='')
-  is_name_valid = current_file_name == test.name || !File.exist?("./Tests/#{test.name}.json")
-  while !is_name_valid
-    puts 'Test with the same name already exist!'
-    puts 'Enter new test name:'
-    new_name = gets.chomp
+    is_name_valid = current_file_name == test.name || !File.exist?("./Tests/#{test.name}.json")
+    while !is_name_valid
+      puts 'Test with the same name already exist!'
+      puts 'Enter new test name:'
+      new_name = gets.chomp
 
-    is_name_valid = !File.exist?("./Tests/#{new_name}.json")
-    if is_name_valid
-      test.name = new_name
+      is_name_valid = !File.exist?("./Tests/#{new_name}.json")
+      if is_name_valid
+        test.name = new_name
+      end
     end
   end
-end
 
   private
   

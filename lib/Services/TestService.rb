@@ -1,7 +1,3 @@
-require_relative '../Classes/Test'
-require_relative '../Helpers/FileHelper'
-require 'json'
-
 class TestService
   def self.init settings
     @@file = FileHelper.new do |helper|
@@ -22,12 +18,12 @@ class TestService
   end
 
   def self.save_test test
-    json = JSON.pretty_generate(test.to_h)
+    json = JSON.pretty_generate test.to_h
     @@file.write test.name, json
   end
 
   def self.load_test test_name
     json = @@file.read test_name
-    Test.from_h(JSON.parse(json))
+    Test.from_h JSON.parse json
   end
 end

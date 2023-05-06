@@ -1,5 +1,3 @@
-require 'telegram/bot'
-
 class TelegramBot
   TOKEN = '5955642556:AAEUtklOhc3lEHMYKSRy165daqMc68pvkYQ'.freeze
 

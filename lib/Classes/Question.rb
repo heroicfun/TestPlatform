@@ -1,5 +1,3 @@
-require 'securerandom'
-
 class Question
   attr_accessor :id, :test_id, :body, :options, :answer
 

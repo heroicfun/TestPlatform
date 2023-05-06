@@ -2,3 +2,7 @@ development:
   test_files:
     path: './Tests'
     ext: 'json'
+
+  answer_files:
+    path: './Answers'
+    ext: 'json'

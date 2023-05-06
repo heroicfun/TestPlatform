@@ -1,8 +1,4 @@
-require_relative '../Helpers/EnumerableHelper'
-require_relative '../Services/QuestionService'
-
 class QuestionMenu
-
   def self.run question, test
     question_menu_loop question, test
   end
