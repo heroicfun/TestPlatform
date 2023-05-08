@@ -3,7 +3,7 @@ class QuestionAnswer
 
   def initialize(question)
     @body = question.body
-    @correct_answer = question.answer
+    @correct_answer = question.options[question.answer]
     @user_answer = nil
   end
 
@@ -25,11 +25,9 @@ class QuestionAnswer
 
   def to_h
     {
-      id: @id,
-      test_id: @test_id,
       body: @body,
-      options: @correct_answer,
-      answer: @user_answer
+      correct_answer: @correct_answer,
+      user_answer: @user_answer
     }
   end
 end
