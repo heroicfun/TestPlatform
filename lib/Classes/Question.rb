@@ -1,7 +1,7 @@
 class Question
   attr_accessor :id, :test_id, :body, :options, :answer
 
-  def initialize()
+  def initialize
     @id = SecureRandom.uuid.to_s
     @test_id = '',
     @body = '',

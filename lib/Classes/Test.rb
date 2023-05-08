@@ -1,7 +1,7 @@
 class Test
   attr_accessor :id, :name, :questions
 
-  def initialize()
+  def initialize
     @id = SecureRandom.uuid.to_s
     @name = ''
     @questions = []
