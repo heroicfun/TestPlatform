@@ -6,3 +6,13 @@ development:
   answer_files:
     path: './Answers'
     ext: 'json'
+
+  db_connection:
+    adapter: 'postgresql'
+    database: 'TestPlatform'
+    encoding: 'unicode'
+    username: 'postgres'
+    password: 'password'
+    host: 'localhost'
+    port: 5432
+    pool: 5
