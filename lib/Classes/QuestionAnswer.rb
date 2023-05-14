@@ -1,10 +1,15 @@
 class QuestionAnswer
-  attr_accessor :id, :test_id, :body, :correct_answer, :user_answer
+  attr_accessor :id, :test_id, :body, :options, :correct_answer, :user_answer
 
-  def initialize(question)
-    @body = question.body
-    @correct_answer = question.options[question.answer]
-    @user_answer = nil
+  def self.from_question(question)
+    answer = self.new()
+    
+    answer.body = question.body
+    answer.options = question.options
+    answer.correct_answer = question.options[question.answer]
+    answer.user_answer = nil
+
+    answer
   end
 
   def is_correct?
@@ -17,6 +22,7 @@ class QuestionAnswer
     answer.id = h['id']
     answer.test_id = h['test_id']
     answer.body = h['body']
+    answer.options = h['options']
     answer.correct_answer = h['correct_answer']
     answer.user_answer = h['user_answer']
 
@@ -26,6 +32,7 @@ class QuestionAnswer
   def to_h
     {
       body: @body,
+      options: @options,
       correct_answer: @correct_answer,
       user_answer: @user_answer
     }

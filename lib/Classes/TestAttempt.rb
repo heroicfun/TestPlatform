@@ -1,17 +1,21 @@
 class TestAttempt
   attr_accessor :id, :start_time, :user_name, :test_id, :test_name, :status, :question_answers
 
-  def initialize(user_name, test)
-    @id = SecureRandom.uuid.to_s
-    @start_time = Time.now.utc
-    @user_name = user_name
-    @test_id = test.id
-    @test_name = test.name
-    @status = AttemptStatus::STARTED
-    @question_answers = []
+  def self.from_test(test)
+    attempt = self.new()
+
+    attempt.id = SecureRandom.uuid.to_s
+    attempt.start_time = Time.now.utc
+    attempt.user_name = ''
+    attempt.test_id = test.id
+    attempt.test_name = test.name
+    attempt.status = AttemptStatus::STARTED
+    attempt.question_answers = []
     test.questions.each do |question|
-      @question_answers.append QuestionAnswer.new question
+      attempt.question_answers.append QuestionAnswer.from_question question
     end
+
+    attempt
   end
   
   def self.from_h(h)

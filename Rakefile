@@ -3,7 +3,6 @@ require 'active_record'
 require 'yaml'
 
 namespace :db do
-
   desc 'Migrate the database'
   task :migrate do
     db_connection = YAML::load(File.open('config.yml'))['development']['db_connection']

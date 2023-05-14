@@ -10,7 +10,9 @@ class RunTestMenu
     puts 'Enter your name:'
     user_name = gets.chomp
 
-    @@test_attempt = TestAttempt.new user_name, test
+    @@test_attempt = TestAttempt.from_test test
+    @@test_attempt.user_name = user_name
+    
     @@filename = "#{@@test_attempt.user_name}_#{@@test_attempt.test_name}_#{@@test_attempt.start_time.to_i}"
 
     save_test_attempt
@@ -27,7 +29,7 @@ class RunTestMenu
 
       puts 'Select the answer:'
       answer_index = gets.chomp.to_i - 1
-      while answer_index < 0 || answer_index >= test.questions.size
+      while answer_index < 0 || answer_index >= test.questions[question_index].options.size
         puts 'Invalid value entered!'
         puts 'Select the answer again:'
         answer_index = gets.chomp
